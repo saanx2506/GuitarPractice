@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Theory — Guitar Lab</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>GUITAR <span>LAB</span></h1>
+  <nav>
+    <a href="index.html">Dashboard</a>
+    <a href="theory.html" class="active">Theory</a>
+    <a href="practice.html">Practice</a>
+  </nav>
+</header>
+<main>
+  <h2>Theory — Full Study Sequence</h2>
+  <p class="sub">13 modules. Hover any <span class="term" data-def="Like this.">highlighted term</span> for a definition. Each module has a YouTube lesson and practice exercises.</p>
+  <div class="grid" id="theoryList"></div>
+</main>
+<footer>Original companion site. Theory restated in original words.</footer>
+<script src="data.js"></script>
+<script>
+const wrap = document.getElementById("theoryList");
+MODULES.forEach(m=>{
+  const el = document.createElement("div");
+  el.className = "card lesson";
+  el.id = "m" + m.id;
+  let html = `<span class="tag">Step ${String(m.id).padStart(2,'0')}</span>
+    <h3>${m.icon} ${m.title}</h3>
+    <p style="margin:4px 0 10px;color:var(--muted);font-size:13px">${m.description}</p>`;
+  m.sections.forEach(s=>{
+    html += `<h4>${s.h}</h4><div class="lesson-body">${s.body}</div>`;
+  });
+  html += `<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px">`;
+  html += `<a class="video-link" href="https://www.youtube.com/results?search_query=${encodeURIComponent(m.youtube)}" target="_blank">▶ YouTube: ${m.youtube}</a>`;
+  m.exercises.forEach(ex=>{
+    html += `<button class="more" data-ex="${ex}">Practice ${ex} →</button>`;
+  });
+  html += `</div>`;
+  el.innerHTML = html;
+  el.querySelectorAll(".more").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      window.location.href = "practice.html?ex=" + btn.dataset.ex;
+    });
+  });
+  wrap.appendChild(el);
+});
+</script>
+</body>
+</html>

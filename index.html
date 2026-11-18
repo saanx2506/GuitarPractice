@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guitar Lab — Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>GUITAR <span>LAB</span></h1>
+  <nav>
+    <a href="index.html" class="active">Dashboard</a>
+    <a href="theory.html">Theory</a>
+    <a href="practice.html">Practice</a>
+  </nav>
+</header>
+<main>
+  <h2>Today's Practice Plan</h2>
+  <p class="sub" id="todayLine"></p>
+  <div class="grid" id="taskList"></div>
+  <div class="spotify-wrap" style="margin-top:20px">
+    <p><strong>🎧 Guitar Aerobics CD1 Reference</strong></p>
+    <iframe style="border-radius:10px" src="https://open.spotify.com/embed/playlist/25AkD70NQKPqz7oPmAFISZ?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+  </div>
+</main>
+<footer>Original companion site. Theory restated in original words; exercises inspired by Kolb's <em>Music Theory for Guitarists</em> and Nelson's <em>Guitar Aerobics</em>.</footer>
+<script src="data.js"></script>
+<script>
+function renderDashboard(){
+  const d = new Date();
+  const dayIdx = d.getDay();
+  const [technique, exId] = DAY_ROTATION[dayIdx];
+  const theoryToday = THEORY_CHAPTERS[dayIdx % THEORY_CHAPTERS.length];
+
+  document.getElementById("todayLine").textContent =
+    d.toLocaleDateString(undefined,{weekday:"long",month:"short",day:"numeric"}) +
+    " · Technique: " + technique;
+
+  const tasks = [
+    {title:"Warm-up: " + (dayIdx===6?"Finger Stretch":"Chromatic") + " (15 min)", meta:"Metronome 50→85 BPM", href:"practice.html?ex="+(dayIdx===6?"exWarm1":"exWarm2")},
+    {title:"Technique: " + technique, meta:"Guitar Aerobics · 8-set ladder", href:"practice.html?ex="+exId},
+    {title:"Theory: " + theoryToday.title, meta:"Chapter " + theoryToday.ch, href:"theory.html#ch"+theoryToday.ch},
+    {title:"Repertoire / song practice", meta:"10 min · play something you enjoy", href:"practice.html"}
+  ];
+
+  const list = document.getElementById("taskList");
+  list.innerHTML = "";
+  tasks.forEach((t,i)=>{
+    const card = document.createElement("div");
+    card.className = "card task";
+    const checked = localStorage.getItem("gt_task_"+i)==="1";
+    card.innerHTML = `<input type="checkbox" ${checked?"checked":""}><div><h3>${t.title}</h3><p>${t.meta}</p></div>`;
+    card.querySelector("input").addEventListener("change",e=>{
+      localStorage.setItem("gt_task_"+i, e.target.checked?"1":"");
+      card.classList.toggle("done", e.target.checked);
+    });
+    card.addEventListener("click",e=>{
+      if(e.target.tagName==="INPUT") return;
+      window.location.href = t.href;
+    });
+    card.classList.toggle("done", checked);
+    list.appendChild(card);
+  });
+}
+renderDashboard();
+</script>
+</body>
+</html>

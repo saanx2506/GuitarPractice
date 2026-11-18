@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice — Guitar Lab</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  /* Extra styles for the practice library */
+  .lib-section{margin-bottom:24px}
+  .lib-section h3{font-size:15px;color:var(--accent);margin:0 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+  .lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+  .lib-card{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:12px 14px;cursor:pointer;transition:.15s}
+  .lib-card:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .lib-card.active{border-color:var(--accent);background:#2a2210}
+  .lib-card h4{margin:0 0 4px;font-size:13px;color:var(--text)}
+  .lib-card p{margin:0;font-size:11px;color:var(--muted);line-height:1.4}
+  .lib-card .level{display:inline-block;font-size:10px;padding:1px 7px;border-radius:99px;
+    background:#1a2a1e;color:var(--ok);border:1px solid #2a4a30;margin-bottom:5px}
+  .lib-card .tech{display:inline-block;font-size:10px;padding:1px 7px;border-radius:99px;
+    background:#1a1f2a;color:var(--accent2);border:1px solid var(--line);margin-left:4px;margin-bottom:5px}
+  .lib-card .ch{display:inline-block;font-size:10px;padding:1px 7px;border-radius:99px;
+    background:#221a2a;color:#c792ea;border:1px solid #3a2a4a;margin-left:4px;margin-bottom:5px}
+  .empty-note{background:#1a1f2a;border:1px dashed var(--line);border-radius:8px;
+    padding:12px;font-size:12px;color:var(--muted);text-align:center;margin-bottom:16px}
+</style>
+</head>
+<body>
+<header>
+  <h1>GUITAR <span>LAB</span></h1>
+  <nav>
+    <a href="index.html">Dashboard</a>
+    <a href="theory.html">Theory</a>
+    <a href="practice.html" class="active">Practice</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ============ PRACTICE LIBRARY ============ -->
+  <section id="libraryView">
+    <h2>Practice Library</h2>
+    <p class="sub">Pick a warm-up or exercise. It loads into the metronome below. Hover any card to preview — click to load.</p>
+
+    <div id="libWarning" class="empty-note hidden">No exercises loaded. Make sure <code>data.js</code> is in the same folder and contains <code>WARMUPS</code> and <code>EXERCISES</code>.</div>
+
+    <!-- Warm-ups by level -->
+    <div class="lib-section">
+      <h3>🔥 Warm-Ups (Bernth play-along style)</h3>
+      <div class="lib-grid" id="warmupGrid"></div>
+    </div>
+
+    <!-- Exercises by technique -->
+    <div class="lib-section">
+      <h3>🎯 Technique Exercises</h3>
+      <div class="lib-grid" id="exerciseGrid"></div>
+    </div>
+
+    <!-- Exercises by theory chapter -->
+    <div class="lib-section">
+      <h3>📖 Exercises by Theory Module</h3>
+      <div class="lib-grid" id="theoryGrid"></div>
+    </div>
+  </section>
+
+  <!-- ============ METRONOME + EXERCISE VIEWER ============ -->
+  <section id="metroView" style="margin-top:30px">
+    <h2 id="exTitle">Metronome</h2>
+    <p class="sub" id="exMeta">Select an exercise above, or use the metronome freely.</p>
+
+    <div class="card metro">
+      <div class="bpm-display"><span id="bpm">80</span><small>BPM</small></div>
+      <div class="beat-row" id="beats"></div>
+      <div class="controls">
+        <button class="btn small" id="minus10">−10</button>
+        <button class="btn small" id="minus1">−1</button>
+        <button class="btn primary" id="play">▶ Play</button>
+        <button class="btn small" id="plus1">+1</button>
+        <button class="btn small" id="plus10">+10</button>
+        <button class="btn ghost small" id="tapBtn">Tap</button>
+      </div>
+      <div class="controls">
+        <label class="inline">Genre:
+          <select id="genreSelect">
+            <option value="rockblues">Rock/Blues</option>
+            <option value="metal">Metal</option>
+            <option value="bluesshuffle">Blues Shuffle</option>
+            <option value="jazzswing">Jazz Swing</option>
+            <option value="country">Country</option>
+            <option value="funk">Funk</option>
+            <option value="warmup">Warm-Up (slow)</option>
+          </select>
+        </label>
+        <label class="inline">Time sig:
+          <select id="beatsSelect">
+            <option value="4">4/4</option>
+            <option value="3">3/4</option>
+            <option value="6">6/8</option>
+          </select>
+        </label>
+        <label class="inline">Subdivision:
+          <select id="subdivSelect">
+            <option value="1">Quarter</option>
+            <option value="2">Eighth</option>
+            <option value="3">Triplet</option>
+            <option value="4">16th</option>
+          </select>
+        </label>
+      </div>
+      <div class="practice-mode-toggle">
+        <label><input type="checkbox" id="practiceMode"> Practice Mode: auto-advance through all tempo sets</label>
+      </div>
+      <div class="sets" id="sets"></div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3 id="exName">—</h3>
+      <p id="exDesc" style="margin:5px 0 8px"></p>
+      <p style="font-size:12px;color:var(--accent2)">💡 <span id="exTip"></span></p>
+      <pre class="tab" id="exTab"></pre>
+      <div id="exLinks"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>Original companion site. Exercises inspired by Nelson's <em>Guitar Aerobics</em>; warm-ups in the style of Bernth play-alongs.</footer>
+
+<script src="data.js"></script>
+<script>
+/* =========================================================
+   GUARD: make sure data.js loaded correctly
+   ========================================================= */
+if(typeof WARMUPS === "undefined" || typeof EXERCISES === "undefined" || typeof GENRE_LADDERS === "undefined"){
+  document.getElementById("libWarning").classList.remove("hidden");
+  console.error("data.js is missing or failed to load.");
+}
+
+/* =========================================================
+   LIBRARY RENDERING
+   ========================================================= */
+function levelClass(level){
+  return level && level.includes("Level 2") ? "level-2" : "level-1";
+}
+
+function buildLibCard(id, ex, type){
+  const card = document.createElement("div");
+  card.className = "lib-card";
+  card.dataset.ex = id;
+  const levelTag = ex.level ? `<span class="level">${ex.level}</span>` : "";
+  const techTag = ex.technique ? `<span class="tech">${ex.technique}</span>` : "";
+  const chTag = ex.theoryCh ? `<span class="ch">Module ${ex.theoryCh}</span>` : "";
+  card.innerHTML = `
+    ${levelTag}${techTag}${chTag}
+    <h4>${ex.title}</h4>
+    <p>${ex.description}</p>`;
+  card.addEventListener("click", ()=>{
+    document.querySelectorAll(".lib-card").forEach(c=>c.classList.remove("active"));
+    card.classList.add("active");
+    loadExercise(id);
+    document.getElementById("metroView").scrollIntoView({behavior:"smooth"});
+  });
+  return card;
+}
+
+function renderLibrary(){
+  // Warm-ups
+  const warmGrid = document.getElementById("warmupGrid");
+  warmGrid.innerHTML = "";
+  if(typeof WARMUPS !== "undefined"){
+    Object.entries(WARMUPS).forEach(([id,ex])=>{
+      warmGrid.appendChild(buildLibCard(id, ex, "warmup"));
+    });
+  }
+
+  // Exercises grouped by technique
+  const exGrid = document.getElementById("exerciseGrid");
+  exGrid.innerHTML = "";
+  if(typeof EXERCISES !== "undefined"){
+    const byTech = {};
+    Object.entries(EXERCISES).forEach(([id,ex])=>{
+      const t = ex.technique || "Other";
+      if(!byTech[t]) byTech[t] = [];
+      byTech[t].push([id,ex]);
+    });
+    Object.keys(byTech).sort().forEach(tech=>{
+      byTech[tech].forEach(([id,ex])=>{
+        exGrid.appendChild(buildLibCard(id, ex, "exercise"));
+      });
+    });
+  }
+
+  // Exercises grouped by theory module
+  const thGrid = document.getElementById("theoryGrid");
+  thGrid.innerHTML = "";
+  if(typeof EXERCISES !== "undefined"){
+    const byCh = {};
+    Object.entries(EXERCISES).forEach(([id,ex])=>{
+      if(ex.theoryCh){
+        if(!byCh[ex.theoryCh]) byCh[ex.theoryCh] = [];
+        byCh[ex.theoryCh].push([id,ex]);
+      }
+    });
+    Object.keys(byCh).sort((a,b)=>a-b).forEach(ch=>{
+      byCh[ch].forEach(([id,ex])=>{
+        thGrid.appendChild(buildLibCard(id, ex, "exercise"));
+      });
+    });
+    if(Object.keys(byCh).length === 0){
+      thGrid.innerHTML = `<div class="empty-note">No exercises are tagged with a theory module yet.</div>`;
+    }
+  }
+}
+
+/* =========================================================
+   METRONOME (Web Audio)
+   ========================================================= */
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+let bpm = 80, beatsPerBar = 4, subdivision = 1, playing = false, timer = null;
+let nextNoteTime = 0, currentBeat = 0, subTick = 0;
+let currentSetIndex = 0, practiceMode = false, setRepsRemaining = 10;
+
+const bpmEl = document.getElementById("bpm");
+const beatsEl = document.getElementById("beats");
+const setsEl = document.getElementById("sets");
+const genreSel = document.getElementById("genreSelect");
+const beatsSel = document.getElementById("beatsSelect");
+const subdivSel = document.getElementById("subdivSelect");
+const practiceToggle = document.getElementById("practiceMode");
+
+function buildBeatDots(){
+  beatsEl.innerHTML = "";
+  for(let i=0;i<beatsPerBar;i++){
+    const d = document.createElement("span");
+    d.className = "beat" + (i===0?" accent":"");
+    beatsEl.appendChild(d);
+  }
+}
+function drawBeat(){
+  [...beatsEl.children].forEach((el,i)=>el.classList.toggle("on", i===currentBeat));
+}
+function scheduleClick(time, accent){
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.frequency.value = accent ? 1000 : 700;
+  gain.gain.setValueAtTime(0.0001, time);
+  gain.gain.exponentialRampToValueAtTime(accent ? 0.4 : 0.25, time + 0.002);
+  gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.05);
+  osc.start(time); osc.stop(time + 0.06);
+}
+function scheduler(){
+  while(nextNoteTime < audioCtx.currentTime + 0.1){
+    const secondsPerBeat = 60 / bpm;
+    const subInterval = secondsPerBeat / subdivision;
+    const isBeatStart = (subTick === 0);
+    const accent = (currentBeat === 0 && isBeatStart);
+    scheduleClick(nextNoteTime, accent);
+    nextNoteTime += subInterval;
+    subTick++;
+    if(subTick >= subdivision){
+      subTick = 0;
+      currentBeat = (currentBeat + 1) % beatsPerBar;
+      setTimeout(()=>drawBeat(), Math.max(0,(nextNoteTime - audioCtx.currentTime)*1000 - 10));
+      if(practiceMode){
+        setRepsRemaining--;
+        if(setRepsRemaining <= 0){
+          const ladder = GENRE_LADDERS[genreSel.value];
+          if(currentSetIndex < ladder.length - 1){
+            currentSetIndex++;
+            bpm = ladder[currentSetIndex];
+            bpmEl.textContent = bpm;
+            setRepsRemaining = 10;
+            markSet();
+          }
+        }
+      }
+    }
+  }
+}
+function start(){
+  if(playing) return;
+  if(!audioCtx) audioCtx = new AudioCtx();
+  if(audioCtx.state === "suspended") audioCtx.resume();
+  playing = true; currentBeat = 0; subTick = 0;
+  nextNoteTime = audioCtx.currentTime + 0.1;
+  setRepsRemaining = 10;
+  timer = setInterval(scheduler, 25);
+  document.getElementById("play").textContent = "■ Stop";
+  document.getElementById("play").classList.remove("primary");
+}
+function stop(){
+  playing = false; clearInterval(timer); timer = null;
+  [...beatsEl.children].forEach(el=>el.classList.remove("on"));
+  document.getElementById("play").textContent = "▶ Play";
+  document.getElementById("play").classList.add("primary");
+}
+function setBpm(v){
+  bpm = Math.min(300, Math.max(20, v));
+  bpmEl.textContent = bpm;
+  markSet();
+}
+function renderSets(){
+  const ladder = GENRE_LADDERS[genreSel.value];
+  setsEl.innerHTML = "";
+  ladder.forEach((b,i)=>{
+    const s = document.createElement("div");
+    s.className = "set"; s.textContent = b + " bpm";
+    s.onclick = ()=>{ currentSetIndex = i; setBpm(b); markSet(); };
+    setsEl.appendChild(s);
+  });
+  markSet();
+}
+function markSet(){
+  const ladder = GENRE_LADDERS[genreSel.value];
+  [...setsEl.children].forEach((el,i)=>el.classList.toggle("current", ladder[i]===bpm));
+}
+let tapTimes = [];
+document.getElementById("tapBtn").onclick = ()=>{
+  const now = performance.now();
+  tapTimes.push(now);
+  if(tapTimes.length > 5) tapTimes.shift();
+  if(tapTimes.length >= 2){
+    let intervals = [];
+    for(let i=1;i<tapTimes.length;i++) intervals.push(tapTimes[i]-tapTimes[i-1]);
+    const avg = intervals.reduce((a,b)=>a+b,0)/intervals.length;
+    setBpm(Math.round(60000/avg));
+  }
+};
+document.getElementById("play").onclick = ()=> playing ? stop() : start();
+document.getElementById("minus10").onclick = ()=> setBpm(bpm-10);
+document.getElementById("minus1").onclick = ()=> setBpm(bpm-1);
+document.getElementById("plus1").onclick = ()=> setBpm(bpm+1);
+document.getElementById("plus10").onclick = ()=> setBpm(bpm+10);
+beatsSel.onchange = ()=>{ beatsPerBar = +beatsSel.value; currentBeat = 0; buildBeatDots(); };
+subdivSel.onchange = ()=>{ subdivision = +subdivSel.value; subTick = 0; };
+genreSel.onchange = ()=>{ currentSetIndex = 0; renderSets(); setBpm(GENRE_LADDERS[genreSel.value][0]); };
+practiceToggle.onchange = ()=>{ practiceMode = practiceToggle.checked; setRepsRemaining = 10; };
+
+/* =========================================================
+   EXERCISE VIEWER (loads into the metronome card)
+   ========================================================= */
+function loadExercise(id){
+  const ex = (typeof EXERCISES !== "undefined" && EXERCISES[id]) ||
+             (typeof WARMUPS !== "undefined" && WARMUPS[id]);
+  if(!ex) return;
+
+  document.getElementById("exTitle").textContent = ex.title;
+  const chTag = ex.theoryCh ? `<span class="tag theory-link">Module ${ex.theoryCh}</span>` : "";
+  const levelTag = ex.level ? `<span class="tag warmup">${ex.level}</span>` : "";
+  document.getElementById("exMeta").innerHTML =
+    `${levelTag}<span class="tag">${ex.technique}</span><span class="tag genre">${ex.genre}</span>${chTag}`;
+
+  document.getElementById("exName").textContent = ex.title;
+  document.getElementById("exDesc").textContent = ex.description;
+  document.getElementById("exTip").textContent = ex.tip;
+  document.getElementById("exTab").textContent = ex.tab;
+
+  const linkWrap = document.getElementById("exLinks");
+  linkWrap.innerHTML = "";
+  if(ex.videoQuery){
+    const a = document.createElement("a");
+    a.className = "video-link";
+    a.href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(ex.videoQuery);
+    a.target = "_blank";
+    a.textContent = "▶ YouTube: " + ex.videoQuery;
+    linkWrap.appendChild(a);
+  }
+
+  genreSel.value = ex.bpmKey;
+  currentSetIndex = 0;
+  renderSets();
+  setBpm(GENRE_LADDERS[ex.bpmKey][0]);
+
+  // highlight card if triggered by URL
+  document.querySelectorAll(".lib-card").forEach(c=>{
+    c.classList.toggle("active", c.dataset.ex === id);
+  });
+}
+
+/* =========================================================
+   BOOT
+   ========================================================= */
+buildBeatDots();
+renderSets();
+setBpm(80);
+renderLibrary();
+
+const params = new URLSearchParams(location.search);
+if(params.get("ex")){
+  loadExercise(params.get("ex"));
+  setTimeout(()=>document.getElementById("metroView").scrollIntoView({behavior:"smooth"}), 200);
+}
+</script>
+</body>
+</html>

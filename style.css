@@ -1,0 +1,94 @@
+:root{
+    --bg:#0b0f14; --panel:#141a22; --panel2:#1c242f; --line:#2a3542;
+    --text:#e6edf3; --muted:#8b98a9; --accent:#f5a623; --accent2:#4cc9f0;
+    --ok:#3ddc97;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+       background:var(--bg);color:var(--text);line-height:1.6}
+  header{display:flex;align-items:center;gap:16px;padding:12px 22px;
+         background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+  header h1{font-size:17px;margin:0;letter-spacing:.3px;white-space:nowrap}
+  header h1 span{color:var(--accent)}
+  nav{display:flex;gap:4px;margin-left:auto}
+  nav a{background:transparent;border:1px solid var(--line);color:var(--muted);
+        padding:7px 13px;border-radius:7px;cursor:pointer;font-size:13px;text-decoration:none}
+  nav a.active,nav a:hover{border-color:var(--accent);color:var(--accent)}
+  main{max-width:1040px;margin:0 auto;padding:22px 18px 90px}
+  h2{font-size:19px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 18px}
+  .grid{display:grid;gap:12px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:15px 17px}
+  .card h3{margin:0 0 5px;font-size:15px}
+  .card p{margin:0;font-size:13px;color:var(--muted)}
+  .task{display:flex;align-items:flex-start;gap:13px;cursor:pointer}
+  .task input{width:18px;height:18px;accent-color:var(--ok);flex:none;margin-top:3px}
+  .task.done h3{text-decoration:line-through;color:var(--muted)}
+  .tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:99px;
+       background:var(--panel2);color:var(--accent2);margin-right:5px;border:1px solid var(--line)}
+  .tag.genre{color:var(--accent)}
+  .tag.warmup{color:var(--ok)}
+  .tag.theory-link{color:#c792ea}
+  .metro{text-align:center;padding:6px}
+  .bpm-display{font-size:76px;font-weight:700;letter-spacing:-2px;font-variant-numeric:tabular-nums;line-height:1.1}
+  .bpm-display small{font-size:15px;color:var(--muted);font-weight:400;margin-left:6px}
+  .beat-row{display:flex;justify-content:center;gap:6px;margin:12px 0}
+  .beat{width:30px;height:30px;border-radius:50%;background:var(--panel2);
+        border:1px solid var(--line);transition:background .04s}
+  .beat.on{background:var(--accent);border-color:var(--accent);box-shadow:0 0 14px var(--accent)}
+  .beat.accent.on{background:var(--accent2);border-color:var(--accent2);box-shadow:0 0 14px var(--accent2)}
+  .controls{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:10px 0}
+  .btn{background:var(--panel2);border:1px solid var(--line);color:var(--text);
+       padding:8px 15px;border-radius:8px;cursor:pointer;font-size:13px}
+  .btn:hover{border-color:var(--accent)}
+  .btn.primary{background:var(--accent);color:#111;border-color:var(--accent);font-weight:600}
+  .btn.ghost{background:transparent}
+  .btn.small{padding:5px 10px;font-size:12px}
+  select{background:var(--panel2);color:var(--text);border:1px solid var(--line);
+         padding:7px 9px;border-radius:7px;font-size:13px}
+  label.inline{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+  .sets{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-top:14px}
+  .set{background:var(--panel2);border:1px solid var(--line);border-radius:6px;
+       padding:6px 2px;font-size:11px;cursor:pointer;text-align:center;transition:.15s}
+  .set:hover{border-color:var(--accent2)}
+  .set.current{border-color:var(--accent);background:#2a2210;color:var(--accent)}
+  pre.tab{background:#070a0e;border:1px solid var(--line);border-radius:9px;padding:15px;
+          overflow-x:auto;font-size:12px;line-height:1.5;color:#c9d6e3;font-family:ui-monospace,monospace}
+  .hidden{display:none}
+  .lesson{border-left:3px solid var(--accent2);padding-left:13px;margin-bottom:16px}
+  .lesson h3{margin:0 0 3px}
+  .lesson h4{margin:12px 0 4px;font-size:14px;color:var(--accent)}
+  .lesson .more{color:var(--accent);font-size:12px;cursor:pointer;background:none;border:none;padding:0;margin-top:8px}
+  .chapter-nav{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}
+  .chapter-nav button{background:var(--panel2);border:1px solid var(--line);color:var(--muted);
+                      padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer}
+  .chapter-nav button.active{border-color:var(--accent);color:var(--accent)}
+  .spotify-wrap{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px;margin-top:14px}
+  .spotify-wrap p{font-size:12px;color:var(--muted);margin:0 0 8px}
+  .practice-mode-toggle{display:flex;align-items:center;gap:8px;justify-content:center;
+                        margin-top:10px;font-size:12px;color:var(--muted)}
+  .lesson-body{font-size:14px;color:#c9d6e3;margin:10px 0}
+  .lesson-body p{margin:0 0 10px}
+  .lesson-body ul{margin:0 0 10px;padding-left:20px}
+  .lesson-body li{margin-bottom:4px}
+  .example{background:#070a0e;border:1px solid var(--line);border-radius:8px;
+           padding:12px;font-family:ui-monospace,monospace;font-size:12px;
+           color:#c9d6e3;margin:10px 0;overflow-x:auto}
+  .term{color:var(--accent2);font-weight:600;border-bottom:1px dashed var(--accent2);
+        cursor:help;position:relative}
+  .term:hover::after{content:attr(data-def);position:absolute;bottom:130%;left:50%;
+        transform:translateX(-50%);background:#1e2530;color:var(--text);border:1px solid var(--accent2);
+        padding:8px 12px;border-radius:8px;font-size:12px;font-weight:400;white-space:normal;
+        width:max-content;max-width:280px;z-index:50;box-shadow:0 4px 20px rgba(0,0,0,.6);line-height:1.4}
+  .video-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;
+        color:#ff4444;text-decoration:none;margin-top:8px;border:1px solid #ff4444;
+        padding:4px 10px;border-radius:6px}
+  .video-link:hover{background:#ff4444;color:#fff}
+  footer{max-width:1040px;margin:0 auto;padding:18px;font-size:11px;color:var(--muted);
+         border-top:1px solid var(--line);text-align:center}
+  @media(max-width:700px){
+    .sets{grid-template-columns:repeat(4,1fr)}
+    .bpm-display{font-size:56px}
+    nav a{padding:6px 9px;font-size:12px}
+    header h1{font-size:14px}
+  }
